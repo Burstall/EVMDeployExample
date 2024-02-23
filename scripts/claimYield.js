@@ -28,7 +28,7 @@ async function main() {
 
 	const lock = await Lock.attach(process.env.LOCK_ADDRESS);
 
-	await lock.claimAllYield();
+	await lock.claimAllYield(wallet.address);
 }
 
 async function sleep(ms) {
