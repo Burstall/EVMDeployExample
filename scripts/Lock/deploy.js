@@ -22,12 +22,12 @@ async function main() {
 	const currentTimestampInSeconds = Math.round(Date.now() / 1000);
 	const unlockTime = currentTimestampInSeconds + 600;
 
-	const lockedAmount = ethers.parseEther("0.05");
+	const lockedAmount = ethers.parseEther("0.5");
 
 	const Lock = new ethers.ContractFactory(abi, bytecode, wallet);
 
 	const lock = await Lock.deploy(
-		unlockTime, lock.target,
+		unlockTime, wallet.address,
 		{
 			value: lockedAmount,
 		}
