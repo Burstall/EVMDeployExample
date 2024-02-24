@@ -3,8 +3,6 @@ const ethers = require('ethers'); // ethers v6
 const fs = require('fs');
 const url = 'https://sepolia.blast.io';
 const provider = new ethers.JsonRpcProvider(url);
-// const url = `https://sepolia.infura.io/v3/${process.env.INFURA_KEY}`;
-// const provider = new ethers.JsonRpcProvider(url);
 
 async function main() {
 	const wallet = new ethers.Wallet(process.env.BLAST_TESTNET_PRIVATE_KEY, provider);
@@ -15,29 +13,16 @@ async function main() {
 
 	await sleep(1000);
 
-	const json = JSON.parse(fs.readFileSync("artifacts/contracts/Lock.sol/Lock.json"));
+	const json = JSON.parse(fs.readFileSync("artifacts/contracts/NFTContract.sol/NFTContract.json"));
 	const bytecode = json.bytecode;
 	const abi = json.abi;
 
-	const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-	const unlockTime = currentTimestampInSeconds + 600;
 
-	const lockedAmount = ethers.parseEther("0.05");
+	const NFTContract = new ethers.ContractFactory(abi, bytecode, wallet);
 
-	const Lock = new ethers.ContractFactory(abi, bytecode, wallet);
+	const nftContract = await NFTContract.attach(process.env.NFTContract);
 
-	const lock = await Lock.deploy(
-		unlockTime,
-		{
-			value: lockedAmount,
-		}
-	);
-
-	console.log(
-		`Lock with ${ethers.formatEther(
-			lockedAmount
-		)}ETH and unlock timestamp ${unlockTime} deployed to ${lock.target}`
-	);
+	await nftContract.safeMint(wallet.address, 'metadataUR2.json');
 }
 
 async function sleep(ms) {

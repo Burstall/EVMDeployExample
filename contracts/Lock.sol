@@ -15,7 +15,9 @@ contract Lock is Ownable {
 
     event Withdrawal(uint256 amount, uint256 when);
 
-    constructor(uint256 _unlockTime) payable {
+    constructor(uint256 _unlockTime, address initialOwner) payable 
+		Ownable(initialOwner)
+	{
         require(
             block.timestamp < _unlockTime,
             "Unlock time in past"
